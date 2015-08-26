@@ -1,7 +1,7 @@
 Overview
 ========
 Mock server compliant with [Google Open Spherical (OSC) API specification](https://developers.google.com/open-spherical-camera/). Spherical cameras can take
-360 degree still photo or video, making them useful for virtual reality
+360 degree still photos or video, making them useful for virtual reality
 and projects that offer new experiences.
 
 
