@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteRule ^info$ info.php
+RewriteRule ^state$ state.php
+RewriteRule ^checkForUpdates$ checkForUpdates.php
+RewriteRule ^commands/execute$ execute.php
+RewriteRule ^commands/status$ status.php
