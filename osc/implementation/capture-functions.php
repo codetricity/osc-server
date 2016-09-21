@@ -29,8 +29,28 @@ function capture_image() {
   // copy images to new location
   $newImage = "photos/" . $newName . "-full.jpg";
   $newThumbnail = "photos/" . $newName . "-thumbnail.jpg";
-  copy($image, $newImage);
-  copy($thumbnail, $newThumbnail);
+  // check if photos directory exists and create if needed
+  if (!file_exists("photos") && !is_dir("photos")) {
+    if (!mkdir("photos")) {
+      $errors = error_get_last();
+      echo "Error: ".$errors['type']."\n";
+      echo $errors['message']."\n";
+      return false;
+    }    
+  }
+  // check if php copy succeeds 
+  if (!copy($image, $newImage)) {
+    $errors = error_get_last();
+    echo "Error: ".$errors['type']."\n";
+    echo $errors['message']."\n";
+    return false;
+  }
+  if (!copy($thumbnail, $newThumbnail)) {
+    $errors = error_get_last();
+    echo "Error: ".$errors['type']."\n";
+    echo $errors['message']."\n";
+    return false;
+  }
   // get URI
   $uri = str_replace("photos/", "", $newImage);
   $uri = str_replace("-full.jpg", "", $uri);
