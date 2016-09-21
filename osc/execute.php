@@ -113,6 +113,33 @@ case "camera.takePicture":
   echo(command_take_picture($parameters["sessionId"]));
   break;
 
+case "camera.listFiles":
+  if (!isset($parameters["fileType"])) {
+    echo format_error("camera.listFiles", "missingParameter",
+      "Required parameter fileType not specified");
+    exit;
+  }
+  if (!isset($parameters["entryCount"])) {
+    echo format_error("camera.listFiles", "missingParameter",
+      "Required parameter entryCount not specified");
+    exit;
+  } 
+  if (!isset($parameters["startPosition"])) {
+    $parameters["startPosition"] = 0;
+  }
+  if (!isset($parameters["maxThumbSize"])) {
+    echo format_error("camera.listFiles", "missingParameter",
+      "Required parameter maxThumbSize not specified");
+    exit;
+  }
+  ensure_no_invalid_parameters(array(
+      "entryCount", "maxThumbSize", "fileType", "startPosition"
+    ), $parameters, $name);
+  keepalive_sessions();
+  echo(command_list_files($parameters["entryCount"], $parameters["maxThumbSize"],
+    $parameters["fileType"], $parameters["startPosition"]));
+  break;
+
 case "camera.listImages":
   if (!isset($parameters["entryCount"])) {
     echo format_error("camera.listImages", "missingParameter",

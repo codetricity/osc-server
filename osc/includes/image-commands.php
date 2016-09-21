@@ -66,6 +66,27 @@ function command_list_images($entryCount, $maxSize, $continuationToken = "",
   return format_results("camera.listImages", $images);
 }
 
+function command_list_files($entryCount, $maxThumbSize, $continuationToken = "",
+    $fileType, $startPosition) {
+  // limit to 100 entries if not specified
+  if ($entryCount <= 0 || $entryCount >= 100) {
+    $entryCount = 100;
+  }
+  // get list of files
+  $images = get_file_list($start, $entryCount);
+
+  if ($images === false) {
+    return format_error("camera.listFiles", "serverError",
+      "unable to retrieve images");
+  }
+  // retrieve thumbnails if requested
+  foreach ($images['entries'] as &$image) {
+    $image['thumbnail'] = base64_encode(get_image($image['uri'], $maxSize));
+  }
+  // return results
+  return format_results("camera.listFiles", $images);
+}
+
 function command_delete($uri) {
   if (delete_image($uri) === false) {
     return format_error("camera.delete", "invalidParameterValue",
