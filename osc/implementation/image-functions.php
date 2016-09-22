@@ -171,6 +171,58 @@ function get_starting_value($continuationToken) {
   return $start;
 }
 
+function get_file_list($numEntries) {
+  // get images
+  $files = get_list_of_all_images();
+  if ($files === false) {
+    return false;
+  }
+  // loop through all files, counting them and outputting them as necessary
+  $count = 0;
+  $entries = array();
+  foreach ($files as $file) {
+    $count++;
+    // only print file if we haven't reached entryCount limit
+    if ($count <= $numEntries) {
+      $data = file_get_contents($path);
+      $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+      // get file info
+      $exif = exif_read_data($file['path']);
+      // create entry
+      $entry = array(
+        "fileUrl" => "http://" . $_SERVER['SERVER_NAME'] . "/osc/" . $file['path'],
+        "dateTimeZone" => date("Y:m:d G:i:sP", intval($exif['FileDateTime'])),
+        "width" => $exif['COMPUTED']['Width'],
+        "height" => $exif['COMPUTED']['Height'],
+        "name" => $file['uri'],
+        "size" => filesize($file['path']),
+        "isProcessed" => true,
+        "previewUrl" => ""
+      );
+      // add gps info if present
+      if (isset($exif['GPSLatitude']) && isset($exif['GPSLatitudeRef']) &&
+        isset($exif['GPSLongitude']) && isset($exif['GPSLongitudeRef'])) {
+          $entry["lat"] = getGps($exif['GPSLatitude'],
+          $exif['GPSLatitudeRef']);
+          $entry["lng"] = getGps($exif['GPSLongitude'],
+          $exif['GPSLongitudeRef']);
+        }
+        // add entry to list of entries
+      array_push($entries, $entry);
+    } else {
+      // we have more files than requested
+      return array(
+        "entries" => $entries,
+        "totalEntries" => $numEntries
+      );
+    }
+  }
+  return array(
+    "entries" => $entries,
+    "totalEntries" => $count
+  );
+}
+
 function get_image_list($startingValue, $numEntries) {
   // get images
   $files = get_list_of_all_images();
